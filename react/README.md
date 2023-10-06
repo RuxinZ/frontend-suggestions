@@ -13,7 +13,7 @@
 
 - ✅ Enable selection of suggested list items with the enter key or mouse clicks.
 
-- Display a list of currently selected languages above the input form.
+- ✅ Display a list of currently selected languages above the input form.
 
   - Configure a maximum display count for the selected languages, and remove oldest selected items if maximum is exceeded.
   - For redundant selections, remove the language from the list.
@@ -24,7 +24,7 @@
 
 - ✅ Cache API responses.
 
-- Delay sending out requests while typing.
+- 🚧 Delay sending out requests while typing.
 
 - Retain previous state on reload.
 
