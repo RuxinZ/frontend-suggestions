@@ -1,73 +1,33 @@
 import React from 'react';
-import fetchLangs from './utils/api.js';
+import fetchLangs from './utils/api';
+import SelectedLanguages from './components/SelectedLanguages';
+import SearchInput from './components/SearchInput';
+import Suggestion from './components/Suggestion';
 
 function App() {
-  const [query, setQuery] = React.useState('');
-  const [results, setResults] = React.useState([]);
-  const [selected, setSelected] = React.useState([]);
+  const [results, setResults] = React.useState<string[]>([]);
+  const [selectedLangs, setSelectedLangs] = React.useState<string[]>([]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const target = e.target as HTMLInputElement;
-    const curQuery = target.value;
-    const fetechedLangs = curQuery.length
-      ? await fetchLangs(curQuery)
-      : [];
-    setResults(fetechedLangs.slice());
-    setQuery(curQuery);
-  }
-  const handleSelect = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement;
-    const curSelected = target.innerText;
-    setSelected([...selected, curSelected]);
+  const handleSearchInputChange = async (query: string) => {
+    const fetechedLangs = query.length ? await fetchLangs(query) : [];
+    setResults(fetechedLangs);
+  };
+  const handleSuggestionSelect = (lang: string) => {
+    if (!lang) throw new Error('No language selected.');
+    setSelectedLangs(prevSelectedLangs =>
+      prevSelectedLangs.includes(lang)
+        ? prevSelectedLangs.filter(e => e !== lang) // remove selected language
+        : [...prevSelectedLangs, lang]
+    );
   };
 
   return (
     <div className="App">
-      <div className="SelectedLanguage">
-        <ul>
-          {selected.length > 0 &&
-            selected.map(item => (
-              <li key={crypto.randomUUID()}>{item}</li>
-            ))}
-        </ul>
-      </div>
-      <form
-        onSubmit={e => handleSubmit(e)}
-        className="SearchInput"
-        style={{ marginBlockEnd: '2em' }}
-      >
-        <label
-          htmlFor={'searchbox'}
-          style={{
-            display: 'block',
-            marginBlock: '1em',
-            textAlign: 'center',
-            fontSize: '1.4rem',
-          }}
-        >
-          What's your favoriate programming language?
-        </label>
-        <input
-          id="searchbox"
-          className="SearchInput__input"
-          autoComplete="off"
-          type="text"
-          value={query}
-          onChange={e => handleSubmit(e)}
-        />
-      </form>
+      <SelectedLanguages selectedLangs={selectedLangs} />
+      <SearchInput onInputChange={handleSearchInputChange} />
 
       {results.length > 0 && (
-        <div className="Suggestion" style={{ display: 'block' }}>
-          <ul>
-            {results.map(item => (
-              <li key={crypto.randomUUID()} onClick={e => handleSelect(e)}>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Suggestion items={results} onSelect={handleSuggestionSelect} />
       )}
     </div>
   );
