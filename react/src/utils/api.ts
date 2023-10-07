@@ -5,6 +5,7 @@ export const API_ENDPOINT =
 const cache: { [url: string]: string } = {};
 
 const request = async (url: string, options = { method: 'GET' }) => {
+  console.log('enter');
   if (cache[url]) return cache[url]; // is it better to store just the keyword as key in the cache?
   try {
     const results = await fetch(url, options);
@@ -22,8 +23,8 @@ const request = async (url: string, options = { method: 'GET' }) => {
 };
 
 const fetchLangs = async (query: string) => {
-  const debounced_request = _.debounce(request, 100); // debounce working?
-  return debounced_request(
+  // const debounced_request = _.debounce(request, 100); // debounce working?
+  return request(
     `${API_ENDPOINT}/languages?keyword=${encodeURIComponent(query)}`
   );
 };
